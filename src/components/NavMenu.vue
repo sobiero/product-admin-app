@@ -62,11 +62,11 @@
         <template #title>Navigator Four</template>
       </el-menu-item> -->
       <el-menu-item index="5">
-        <el-icon><House /></el-icon>
+        <el-icon><HomeFilled /></el-icon>
         <template #title> <RouterLink to="/">Home</RouterLink></template>
       </el-menu-item>
       <el-menu-item index="6">
-        <el-icon><User /></el-icon>
+        <el-icon><UserFilled /></el-icon>
         <template #title><RouterLink to="/users">Users</RouterLink></template>
       </el-menu-item>
       <el-menu-item index="7">
@@ -74,10 +74,19 @@
         <template #title><RouterLink to="/about">About</RouterLink></template>
       </el-menu-item>
       <el-menu-item index="8">
-        <el-icon><Plus /></el-icon>
+        <el-icon><List /></el-icon>
+        <template #title><RouterLink to="/roles">Roles</RouterLink></template>
+      </el-menu-item>
+      <el-menu-item index="9">
+        <el-icon><Briefcase /></el-icon>
         <template #title
-          ><RouterLink to="/register">Register</RouterLink></template
+          ><RouterLink to="/products">Products</RouterLink></template
         >
+      </el-menu-item>
+
+      <el-menu-item index="10">
+        <el-icon><Briefcase /></el-icon>
+        <template #title><RouterLink to="/orders">Orders</RouterLink></template>
       </el-menu-item>
     </el-menu>
   </div>
@@ -87,12 +96,13 @@
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 import {
-  House,
+  HomeFilled,
   Expand,
   Fold,
-  User,
-  Plus,
+  UserFilled,
   InfoFilled,
+  List,
+  Briefcase,
   //Document,
   //Menu as IconMenu,
   //Setting,

@@ -2,45 +2,63 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-import { Edit, User, Delete } from "@element-plus/icons-vue";
+import { Edit, Plus, Delete } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import { ElNotification } from "element-plus";
 
-const users = ref([]);
-const users_meta: any = ref({});
-const page = ref(1);
-const per_page = ref(10);
+const roles = ref([]);
+// const users_meta: any = ref({});
+// const page = ref(1);
+// const per_page = ref(10);
 
 const router = useRouter();
+
+const errorMsg = ref("");
+const showError = () => {
+  ElNotification({
+    title: "Error",
+    message: errorMsg.value,
+    duration: 0,
+    type: "error",
+  });
+};
 
 const handleEdit = (idx: number, data: any) => {
   console.log(`${idx}  ${data.id}`);
 
-  router.push(`/users/${data.id}/edit`);
+  router.push(`/roles/${data.id}/edit`);
 };
 
 const handleDelete = async (idx: number, data: any) => {
-  console.log(`${idx}  ${data}`);
-  await axios.delete(`users/${data.id}`);
-  await loadUsers(page.value, per_page.value);
+  try {
+    console.log(`${idx}  ${data}`);
+    await axios.delete(`roles/${data.id}`);
+    await loadRoles();
+  } catch (error: any) {
+    //console.log(error.response.data);
+    //showErrorMsg.value = true;
+    errorMsg.value = error.response.data;
+    showError();
+  }
 };
 
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
-  loadUsers(page.value, val);
-};
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-  loadUsers(val, per_page.value);
-};
+// const handleSizeChange = (val: number) => {
+//   console.log(`${val} items per page`);
+//   //loadUsers(page.value, val);
+// };
+// const handleCurrentChange = (val: number) => {
+//   console.log(`current page: ${val}`);
 
-const loadUsers = async (page: number, per_page: number) => {
-  const { data } = await axios.get(`users?page=${page}&per_page=${per_page}`);
-  users.value = data.data;
-  users_meta.value = data.meta;
+// };
+
+const loadRoles = async () => {
+  const { data } = await axios.get(`roles`);
+  roles.value = data;
+  //users_meta.value = data.meta;
 };
 
 onMounted(async () => {
-  await loadUsers(page.value, per_page.value);
+  await loadRoles();
 });
 </script>
 
@@ -48,26 +66,24 @@ onMounted(async () => {
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
-        <span>Users</span>
-        <router-link to="/users/create"
+        <span>Roles</span>
+        <router-link to="/roles/create"
           ><el-button
             size="small"
             type="success"
-            :icon="User"
+            :icon="Plus"
             circle
           ></el-button
         ></router-link>
       </div>
     </template>
     <div>
-      <el-table border :data="users" style="width: 100%">
+      <el-table border :data="roles" style="width: 100%">
         <el-table-column label="Name" width="240">
           <template #default="scope">
-            {{ scope.row.first_name }} {{ scope.row.last_name }}
+            {{ scope.row.name }}
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="Email" width="240" />
-        <el-table-column prop="role.name" label="Role" />
 
         <el-table-column label="Actions">
           <template #default="scope">
@@ -105,21 +121,6 @@ onMounted(async () => {
           </template>
         </el-table-column>
       </el-table>
-
-      <el-pagination
-        style="margin-top: 20px"
-        small
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :page-sizes="[10, 20, 50]"
-        v-model:currentPage="page"
-        v-model:page-size="per_page"
-        :total="users_meta.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        class="mt-4"
-      >
-      </el-pagination>
     </div>
   </el-card>
 </template>

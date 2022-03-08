@@ -1,14 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+//import { ElButton } from "element-plus";
+</script>
 
 <template>
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
-        <span>Dashboard</span>
-        <el-button class="button" type="text">Operation button</el-button>
+        <span>User Profile</span>
       </div>
     </template>
-    <div>vv</div>
+    <div></div>
   </el-card>
 </template>
 

@@ -2,8 +2,9 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-import { Edit, User, Delete } from "@element-plus/icons-vue";
+import { Edit, Plus, Delete } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import type { Product } from "@/models/product";
 
 const users = ref([]);
 const users_meta: any = ref({});
@@ -12,35 +13,37 @@ const per_page = ref(10);
 
 const router = useRouter();
 
-const handleEdit = (idx: number, data: any) => {
+const handleEdit = (idx: number, data: Product) => {
   console.log(`${idx}  ${data.id}`);
 
-  router.push(`/users/${data.id}/edit`);
+  router.push(`/products/${data.id}/edit`);
 };
 
-const handleDelete = async (idx: number, data: any) => {
+const handleDelete = async (idx: number, data: Product) => {
   console.log(`${idx}  ${data}`);
-  await axios.delete(`users/${data.id}`);
-  await loadUsers(page.value, per_page.value);
+  await axios.delete(`products/${data.id}`);
+  await loadProducts(page.value, per_page.value);
 };
 
 const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`);
-  loadUsers(page.value, val);
+  loadProducts(page.value, val);
 };
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
-  loadUsers(val, per_page.value);
+  loadProducts(val, per_page.value);
 };
 
-const loadUsers = async (page: number, per_page: number) => {
-  const { data } = await axios.get(`users?page=${page}&per_page=${per_page}`);
+const loadProducts = async (page: number, per_page: number) => {
+  const { data } = await axios.get(
+    `products?page=${page}&per_page=${per_page}`
+  );
   users.value = data.data;
   users_meta.value = data.meta;
 };
 
 onMounted(async () => {
-  await loadUsers(page.value, per_page.value);
+  await loadProducts(page.value, per_page.value);
 });
 </script>
 
@@ -48,12 +51,12 @@ onMounted(async () => {
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
-        <span>Users</span>
-        <router-link to="/users/create"
+        <span>Products</span>
+        <router-link to="/products/create"
           ><el-button
             size="small"
             type="success"
-            :icon="User"
+            :icon="Plus"
             circle
           ></el-button
         ></router-link>
@@ -61,13 +64,18 @@ onMounted(async () => {
     </template>
     <div>
       <el-table border :data="users" style="width: 100%">
-        <el-table-column label="Name" width="240">
+        <el-table-column label="Image" width="70">
           <template #default="scope">
-            {{ scope.row.first_name }} {{ scope.row.last_name }}
+            <el-image
+              style="max-width: 60px"
+              :src="scope.row.image"
+              lazy
+            ></el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="Email" width="240" />
-        <el-table-column prop="role.name" label="Role" />
+        <el-table-column prop="title" label="Title" width="240" />
+        <el-table-column prop="description" label="Description" />
+        <el-table-column prop="price" label="Price" />
 
         <el-table-column label="Actions">
           <template #default="scope">
@@ -84,13 +92,7 @@ onMounted(async () => {
               cancel-button-text="No"
               confirm-button-type="danger"
               cancel-button-type="success"
-              :title="
-                'Are you sure to delete ' +
-                scope.row.first_name +
-                ' ' +
-                scope.row.last_name +
-                '?'
-              "
+              :title="'Are you sure to delete ' + scope.row.title + '?'"
               @confirm="handleDelete(scope.$index, scope.row)"
             >
               <template #reference>
